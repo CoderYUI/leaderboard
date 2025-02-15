@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaderboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .table-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            min-width: 400px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .data-table thead tr {
+            background-color: #2c3e50;
+            color: #ffffff;
+            text-align: left;
+            font-weight: bold;
+        }
+        .data-table th,
+        .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+        .data-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+            transition: all 0.3s ease;
+        }
+        .data-table tbody tr:nth-of-type(even) {
+            background-color: #f8f9fa;
+        }
+        .data-table tbody tr:hover {
+            background-color: #f2f2f2;
+            transform: scale(1.01);
+        }
+        .data-table tbody tr:last-of-type {
+            border-bottom: 2px solid #2c3e50;
+        }
+        @media (max-width: 768px) {
+            .data-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            .data-table thead tr {
+                position: relative;
+            }
+            body {
+                padding: 10px;
+            }
+        }
+        
+        /* Add these new styles */
+        .data-table td:first-child,
+        .data-table th:first-child {
+            font-weight: bold;
+            background-color: #f0f8ff;
+            text-align: center;
+        }
+        
+        /* Top 3 ranks highlighting */
+        .data-table tr:nth-child(1) td:first-child { background-color: #ffd700; }  /* Gold */
+        .data-table tr:nth-child(2) td:first-child { background-color: #c0c0c0; }  /* Silver */
+        .data-table tr:nth-child(3) td:first-child { background-color: #cd7f32; }  /* Bronze */
+        
+        .nav-buttons {
+            text-align: center;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 0 20px;
+        }
+        
+        .nav-button {
+            padding: 12px 24px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: bold;
+            min-width: 120px;
+        }
+        
+        .nav-button:hover {
+            background-color: #34495e;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .nav-button.active {
+            background-color: #16a085;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Special styling for Overall Score button */
+        .nav-button[href*="overall"] {
+            background-color: #e74c3c;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 200px;
+        }
+        
+        .nav-button[href*="overall"]:hover {
+            background-color: #c0392b;
+        }
+        
+        .nav-button[href*="overall"].active {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <h1>Leaderboard</h1>
+    
+    <div class="nav-buttons">
+        {% for sheet_id, sheet in sheets.items() %}
+            <a href="/{{ sheet_id }}" 
+               class="nav-button {% if sheet_id == current_sheet %}active{% endif %}">
+                {{ sheet.name }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="table-container">
+        {% if data %}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        {% for key in data[0].keys() %}
+                            <th>{{ key }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                        <tr>
+                            {% for value in row.values() %}
+                                <td>{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No data available</p>
+        {% endif %}
+    </div>
+</body>
+</html>

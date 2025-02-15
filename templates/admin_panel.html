@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel - Leaderboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .admin-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .sheet-list {
+            list-style: none;
+            padding: 0;
+        }
+        .sheet-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+        .toggle-button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .toggle-button.visible {
+            background: #27ae60;
+            color: white;
+        }
+        .toggle-button.hidden {
+            background: #c0392b;
+            color: white;
+        }
+        .nav-links {
+            margin-bottom: 2rem;
+        }
+        .nav-links a {
+            color: #2c3e50;
+            text-decoration: none;
+            margin-right: 1rem;
+        }
+        .sheets-container {
+            margin-top: 2rem;
+        }
+        .sheet-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .data-table th, .data-table td {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+        }
+        .data-table th {
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="nav-links">
+            <a href="/">View Leaderboard</a> |
+            <a href="/admin/logout">Logout</a>
+        </div>
+        
+        <h2>Sheet Visibility Controls</h2>
+        <div class="sheets-container">
+            {% for sheet_id, sheet in sheets.items() %}
+            <div class="sheet-section">
+                <div class="sheet-header">
+                    <h3>{{ sheet.name }}</h3>
+                    <button 
+                        onclick="toggleSheet('{{ sheet_id }}')"
+                        class="toggle-button {% if visibility.get(sheet_id, True) %}visible{% else %}hidden{% endif %}"
+                        id="btn-{{ sheet_id }}">
+                        {% if visibility.get(sheet_id, True) %}Visible{% else %}Hidden{% endif %}
+                    </button>
+                </div>
+                
+                {% if sheets_data and sheets_data.get(sheet_id) %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            {% for key in sheets_data[sheet_id][0].keys() %}
+                            <th>{{ key }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in sheets_data[sheet_id] %}
+                        <tr>
+                            {% for value in row.values() %}
+                            <td>{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>No data available</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        async function toggleSheet(sheetId) {
+            try {
+                const response = await fetch(`/admin/toggle/${sheetId}`, {
+                    method: 'POST',
+                    credentials: 'same-origin'
+                });
+                const data = await response.json();
+                
+                const btn = document.getElementById(`btn-${sheetId}`);
+                if (data.visible) {
+                    btn.textContent = 'Visible';
+                    btn.classList.remove('hidden');
+                    btn.classList.add('visible');
+                } else {
+                    btn.textContent = 'Hidden';
+                    btn.classList.remove('visible');
+                    btn.classList.add('hidden');
+                }
+            } catch (e) {
+                console.error('Toggle error:', e);
+                alert('Error toggling visibility');
+            }
+        }
+    </script>
+</body>
+</html>
