@@ -4,12 +4,13 @@ from starlette.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from typing import Optional
-import sys
 import os
+import sys
 from pathlib import Path
 
-# Add parent directory to path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Fix import paths for both local and Vercel
+current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(current_dir)
 
 from data_handler import DataHandler
 from firebase_visibility_manager import FirebaseVisibilityManager
@@ -18,13 +19,14 @@ from config import Config
 app = FastAPI()
 security = HTTPBasic()
 
-# Fix templates path for both Vercel and local
-TEMPLATE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates")
-if not os.path.exists(TEMPLATE_DIR):
-    # Fallback for Vercel
-    TEMPLATE_DIR = os.path.join("/var/task", "templates")
+# Fix templates path for both environments
+if os.getenv('VERCEL'):
+    template_path = 'templates'
+else:
+    template_path = os.path.join(current_dir, 'templates')
 
-templates = Jinja2Templates(directory=TEMPLATE_DIR)
+print(f"Using template path: {template_path}")
+templates = Jinja2Templates(directory=template_path)
 
 # Initialize managers with error handling
 data_handler = DataHandler()
@@ -37,7 +39,7 @@ except Exception as e:
     visibility_manager = None
 
 def get_visibility_manager():
-    if visibility_manager is None:
+    if (visibility_manager is None):
         return {'round1': True, 'round2': True, 'round3': True, 'round4': True, 'overall': True}
     return visibility_manager
 
