@@ -7,7 +7,6 @@ from data_handler import DataHandler
 from firebase_visibility_manager import FirebaseVisibilityManager
 from config import Config
 from typing import Optional
-import uvicorn
 import os
 
 app = FastAPI()
@@ -231,8 +230,3 @@ async def index(request: Request, sheet_id: Optional[str] = 'round1'):
             "request": request,
             "message": "An error occurred while processing your request"
         })
-
-import uvicorn
-
-if __name__ == "__main__":
-    uvicorn.run("api.index:app", host="127.0.0.1", port=8000, reload=True)
