@@ -2,30 +2,18 @@
     "version": 2,
     "builds": [
         {
-            "src": "api/index.py",
-            "use": "@vercel/python",
-            "config": {
-                "includeFiles": [
-                    "templates/**",
-                    "firebase_config.py",
-                    "firebase_visibility_manager.py",
-                    "data_handler.py",
-                    "config.py"
-                ]
-            }
+            "src": "vercel_app.py",
+            "use": "@vercel/python"
         }
     ],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "/api/index.py"
+            "dest": "vercel_app.py"
         }
     ],
     "env": {
-        "PYTHONPATH": "/var/task",
-        "VERCEL_ENV": "production",
-        "ADMIN_PASSWORD": "2427",
-        "GOOGLE_SHEET_URL": "https://docs.google.com/spreadsheets/d/18YGpLXlqNiWfBX7bH-HNN4oFBttFMErHyuMduMGEu4I/edit?usp=sharing",
-        "FIREBASE_DATABASE_URL": "https://leaderboard-accde-default-rtdb.asia-southeast1.firebasedatabase.app/"
+        "PYTHONPATH": ".",
+        "VERCEL_ENV": "production"
     }
 }
