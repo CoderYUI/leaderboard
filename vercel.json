@@ -13,7 +13,10 @@
         }
     ],
     "env": {
-        "PYTHONPATH": ".",
-        "VERCEL_ENV": "production"
+        "PYTHONPATH": "/var/task",
+        "VERCEL_ENV": "production",
+        "ADMIN_PASSWORD": "2427",
+        "GOOGLE_SHEET_URL": "https://docs.google.com/spreadsheets/d/18YGpLXlqNiWfBX7bH-HNN4oFBttFMErHyuMduMGEu4I/edit?usp=sharing",
+        "FIREBASE_DATABASE_URL": "https://leaderboard-accde-default-rtdb.asia-southeast1.firebasedatabase.app/"
     }
 }
