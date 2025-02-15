@@ -18,11 +18,12 @@ from config import Config
 app = FastAPI()
 security = HTTPBasic()
 
-# Fix templates path for Vercel
-TEMPLATE_DIR = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "templates"
-)
+# Fix templates path for both Vercel and local
+TEMPLATE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates")
+if not os.path.exists(TEMPLATE_DIR):
+    # Fallback for Vercel
+    TEMPLATE_DIR = os.path.join("/var/task", "templates")
+
 templates = Jinja2Templates(directory=TEMPLATE_DIR)
 
 # Initialize managers with error handling
