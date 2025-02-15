@@ -14,4 +14,11 @@ from firebase_visibility_manager import FirebaseVisibilityManager
 from config import Config
 
 app = FastAPI()
+security = HTTPBasic()
+templates = Jinja2Templates(directory="templates")
+
+# Initialize managers
+data_handler = DataHandler()
+visibility_manager = None
+
 # ...existing code from main.py...
