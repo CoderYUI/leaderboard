@@ -19,21 +19,28 @@ app = FastAPI()
 security = HTTPBasic()
 
 # Fix templates path for both local and Vercel
-TEMPLATE_DIR = Path(__file__).parent.parent / "templates"
+if os.getenv('VERCEL_ENV'):
+    # Vercel environment
+    TEMPLATE_DIR = Path(__file__).parent.parent / "templates"
+else:
+    # Local environment
+    TEMPLATE_DIR = "templates"
+
 templates = Jinja2Templates(directory=str(TEMPLATE_DIR))
 
-# Initialize managers
+# Initialize managers with error handling
 data_handler = DataHandler()
 visibility_manager = None
 
+try:
+    visibility_manager = FirebaseVisibilityManager(Config.SHEETS.keys())
+except Exception as e:
+    print(f"Firebase initialization error: {e}")
+    visibility_manager = None
+
 def get_visibility_manager():
-    global visibility_manager
     if visibility_manager is None:
-        try:
-            visibility_manager = FirebaseVisibilityManager(Config.SHEETS.keys())
-        except Exception as e:
-            print(f"Firebase initialization error: {e}")
-            return {'round1': True, 'round2': True, 'round3': True, 'round4': True, 'overall': True}
+        return {'round1': True, 'round2': True, 'round3': True, 'round4': True, 'overall': True}
     return visibility_manager
 
 # Copy all existing code from main.py here
